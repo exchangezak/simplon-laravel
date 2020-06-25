@@ -5,6 +5,9 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+USE App\Skill;
+USE App\Level;
+
 
 class User extends Authenticatable
 {
@@ -36,4 +39,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function skills(){
+        return $this->belongsToMany(Skill::class,'level_skill_user');
+    }
+    public function levels(){
+        return $this->belongsToMany(Level::class,'level_skill_user');
+    }
+
 }
