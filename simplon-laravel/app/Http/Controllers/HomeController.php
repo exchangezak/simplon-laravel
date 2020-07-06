@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -21,8 +22,28 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
     public function index()
     {
-        return view('home');
+        $loggedUser=auth()->user();
+        $users=DB::table("users")->get();
+        $skills=DB::table("skills")->get();
+        // $skills_user_level = DB::table("level_skill_user")->where("user_id", "=", $loggedUser->id)->get();
+
+        $skills_user_level = DB::table('level_skill_user')
+        ->select('users.name as username','skills.name', 'levels.level_label')
+        ->join('users','users.id','=',$loggedUser->id)
+        ->join("skills", 'skills.id', "=", "skill_id")
+        ->join("levels", 'levels.id', "=", "level_id")
+        ->where("user_id", "=", $loggedUser->id)
+        ->get();
+        
+        return view('home',["title"=>"titre de la div",
+        "content"=>"contenu de la carte",
+        "users"=>$users,
+        "skills"=>$skills,
+        "skills_user_level" => $skills_user_level
+        ]);
+
     }
 }
